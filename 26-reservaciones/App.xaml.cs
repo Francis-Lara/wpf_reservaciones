@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace wpf_reservaciones
+namespace _26_reservaciones
 {
     /// <summary>
     /// Lógica de interacción para App.xaml
