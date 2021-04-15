@@ -21,7 +21,7 @@ namespace _26_reservaciones
     {
         //Variable miembro
         private static string connecntionString = ConfigurationManager.ConnectionStrings["_26_reservaciones.Properties.Settings.ReservacionesConexion"].ConnectionString;
-        private SqlCommand sqlConnectio = new SqlCommand(connecntionString);
+        private SqlConnection sqlConnection = new SqlConnection(connecntionString);
 
         //Propiedades
 
@@ -32,7 +32,7 @@ namespace _26_reservaciones
         public int Numero { get; set; }
         public EstadosHabitacion Estado { get; set; }
 
-        //Constructor
+        //Constructores
         public Habitacion() { }
 
         public Habitacion(string descripcion, int numero, EstadosHabitacion estado)
@@ -41,5 +41,59 @@ namespace _26_reservaciones
             Numero = numero;
             Estado = estado;
         }
+
+        private string ObtenerEstado(EstadosHabitacion estado)
+        {
+            switch (estado)
+            {
+                case EstadosHabitacion.Ocupado:
+                    return "OCUPADA";
+
+                case EstadosHabitacion.Disponible:
+                    return "disponible";
+
+                case EstadosHabitacion.Mantenimiento:
+                    return "mantenimiento";
+ 
+                case EstadosHabitacion.FueraServicio:
+                    return "fuera de servicio";
+            
+                default:
+                    return "disponible";
+               
+            }
+        }
+        public void CrearHabitacion(Habitacion habitacion)
+        {
+
+            try
+            {
+                string query = @"INSERT INTO Habitaciones.Habitacion (descripcion, numero, estado)
+                             VALUES (@descripcion, @numero, @estado)";
+
+                sqlConnection.Open();
+
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@descripcion", habitacion.Descripcion);
+                sqlCommand.Parameters.AddWithValue("@numero", habitacion.Numero);
+                sqlCommand.Parameters.AddWithValue("@estado", ObtenerEstado(habitacion.Estado));
+
+                // ejecutar comando de insercion.
+                sqlCommand.ExecuteNonQuery();
+
+            }
+
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                //cerrar conexion
+                sqlConnection.Close();
+            }
+        }
     }
+    
 }
