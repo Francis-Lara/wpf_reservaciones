@@ -55,6 +55,9 @@ namespace _26_reservaciones
 
                 //Crear el comando SQL
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+                
+                // Establecer los valores de los parámetros
+                sqlCommand.Parameters.AddWithValue("@username", username);
 
                 using (SqlDataReader rdr = sqlCommand.ExecuteReader())
                 {

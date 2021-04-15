@@ -15,7 +15,7 @@ namespace _26_reservaciones
         Ocupado = 'O',
         Disponible = 'D',
         Mantenimiento = 'M',
-        FueraServicio = 'F'
+        FueraDeServicio = 'F'
     }
     class Habitacion
     {
@@ -60,7 +60,7 @@ namespace _26_reservaciones
                 case EstadosHabitacion.Mantenimiento:
                     return "mantenimiento";
  
-                case EstadosHabitacion.FueraServicio:
+                case EstadosHabitacion.FueraDeServicio:
                     return "fuera de servicio";
             
                 default:
@@ -101,6 +101,39 @@ namespace _26_reservaciones
             finally
             {
                 //cerrar conexion
+                sqlConnection.Close();
+            }
+        }
+        public List<Habitacion> MostrarHabitaciones()
+        {
+            //inicializar una lista vacia de habitaciones
+            List<Habitacion> habitaciones = new List<Habitacion>();
+            try
+            {
+                //query de seleccion
+                string query = @"SELECT id, descripcion, estado
+                                 FROM habitaciones.habitacion ";
+
+                //establecer la conexion
+                sqlConnection.Open();
+                //crear el comando sql
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+
+                //obtener los datos de las habitaciones
+                using (SqlDataReader rdr = sqlCommand.ExecuteReader())
+                {
+                    while (rdr.Read())
+                        habitaciones.Add(new Habitacion { Id = Convert.ToInt32(rdr["id"]), Descripcion = rdr["descripcion"].ToString() });
+                }
+                return habitaciones;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                //Cerrar la conexion
                 sqlConnection.Close();
             }
         }

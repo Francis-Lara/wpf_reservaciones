@@ -34,5 +34,13 @@ namespace _26_reservaciones
             iniciarSesion.Show();
             Close();
         }
+
+        private void btnHabitaciones_Click(object sender, RoutedEventArgs e)
+        {
+            //nueva instancia de la vbentana de habitacioenes
+            Habitaciones habitaciones = new Habitaciones();
+            habitaciones.Show();
+
+        }
     }
 }
