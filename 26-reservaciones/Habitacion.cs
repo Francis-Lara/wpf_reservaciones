@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 //Agrefar los namespace
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Security.Cryptography;
 
 namespace _26_reservaciones
 {
@@ -55,16 +56,16 @@ namespace _26_reservaciones
                     return "OCUPADA";
 
                 case EstadosHabitacion.Disponible:
-                    return "disponible";
+                    return "DISPONIBLE";
 
                 case EstadosHabitacion.Mantenimiento:
-                    return "mantenimiento";
+                    return "MANTENIMIENTO";
  
                 case EstadosHabitacion.FueraDeServicio:
-                    return "fuera de servicio";
+                    return "FUERADESERVICIO";
             
                 default:
-                    return "disponible";
+                    return "DISPONIBLE";
                
             }
 
@@ -134,6 +135,85 @@ namespace _26_reservaciones
             finally
             {
                 //Cerrar la conexion
+                sqlConnection.Close();
+            }
+        }
+
+        public Habitacion BuscarHabitacion(int id)
+        {
+            Habitacion laHabitacion = new Habitacion();
+            try
+            {
+                //Query de busqueda
+                string query = @"SELECT * FROM Habitaciones.Habitacion
+                                WHERE  id = @id";
+
+                //establecer conexion
+                sqlConnection.Open();
+
+                //crear comando sql
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+
+                //establecer el valor del parametro
+                sqlCommand.Parameters.AddWithValue("@id", id);
+
+                using (SqlDataReader rdr = sqlCommand.ExecuteReader())
+                {
+                    while (rdr.Read())
+                    {
+                        laHabitacion.Id = Convert.ToInt32(rdr["id"]);
+                        laHabitacion.Descripcion = rdr["descripcion"].ToString();
+                        laHabitacion.Numero = Convert.ToInt32(rdr["numero"]);
+                        laHabitacion.Estado = (EstadosHabitacion)Convert.ToChar(rdr["estado"].ToString().Substring(0, 1));
+                    }
+
+                }
+                return laHabitacion;
+            }
+            
+            catch (Exception e)
+            {
+                throw e;
+            }
+             finally
+            {
+                sqlConnection.Close();
+            }
+
+        }
+        public void ModificarHabitacion(Habitacion habitacion)
+        {
+            try
+            {
+                //query actualizacion
+                string query = @"UPDATE Habitaciones.Habitacion
+                                SET descripcion = @descripcion, numero = @numero, estado = @estado
+                                WHERE id = @id";
+
+                //establecer conexion
+                sqlConnection.Open();
+
+                //crear comando
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+
+                //establecer valores de los parametros
+                sqlCommand.Parameters.AddWithValue("@id", habitacion.Id);
+                sqlCommand.Parameters.AddWithValue("@descripcion", habitacion.Descripcion);
+                sqlCommand.Parameters.AddWithValue("@numero",habitacion.Numero);
+                sqlCommand.Parameters.AddWithValue("@estado",ObtenerEstado(habitacion.Estado));
+
+                //ejecutar el comando de actualizacion
+                sqlCommand.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw e;
+            }
+            finally
+            {
+                //Cerrar conexion
                 sqlConnection.Close();
             }
         }
