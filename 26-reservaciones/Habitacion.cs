@@ -105,6 +105,10 @@ namespace _26_reservaciones
                 sqlConnection.Close();
             }
         }
+        /// <summary>
+        /// muestra todas las habitaciones
+        /// </summary>
+        /// <returns> listado de todas las habitaciones</returns>
         public List<Habitacion> MostrarHabitaciones()
         {
             //inicializar una lista vacia de habitaciones
@@ -139,6 +143,11 @@ namespace _26_reservaciones
             }
         }
 
+        /// <summary>
+        /// obtiene una habitacion por su id
+        /// </summary>
+        /// <param name="id">el id de la habitacion </param>
+        /// <returns> los datos de la habitacion</returns>
         public Habitacion BuscarHabitacion(int id)
         {
             Habitacion laHabitacion = new Habitacion();
@@ -181,6 +190,10 @@ namespace _26_reservaciones
             }
 
         }
+        /// <summary>
+        /// modifica los datos de una habitacion
+        /// </summary>
+        /// <param name="habitacion">el id de la habitacion</param>
         public void ModificarHabitacion(Habitacion habitacion)
         {
             try
@@ -214,6 +227,41 @@ namespace _26_reservaciones
             finally
             {
                 //Cerrar conexion
+                sqlConnection.Close();
+            }
+        }
+        /// <summary>
+        /// eliminar una habitacion
+        /// </summary>
+        /// <param name="id">id de la habitacion</param>
+        public void EliminarHabitacion(int id)
+        {
+            try
+            {
+                //query de eliminacion
+                string query = @"DELETE FROM Habitaciones.Habitacion
+                                 WHERE id = @id";
+                //establecer la conexion
+                sqlConnection.Open();
+
+                //crear el comando sql
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+
+                //establecer el valor dl parametro
+                sqlCommand.Parameters.AddWithValue("@id", id);
+
+                //ejecutar el comando de eliminacion 
+                sqlCommand.ExecuteNonQuery();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                //cerrar la conexion
                 sqlConnection.Close();
             }
         }
